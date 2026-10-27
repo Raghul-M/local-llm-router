@@ -2,6 +2,8 @@
 
 > Carry your LLMs on a USB drive. Let a 0.8B model decide which big model answers.
 
+![local-llm-router — an offline AI chatbot that routes each question to the right local model, running from an external drive](assets/overview.png)
+
 A fully local inference stack built on [Ollama](https://ollama.com):
 
 - a **0.8B classifier** scores every prompt and routes it to a specialist model
@@ -38,7 +40,7 @@ pick from a dropdown every time, a very small model picks for them.
                               │ noul scores
                  ┌────────────┼────────────┐
                  ▼            ▼            ▼
-              coding      research       writing
+              coding      research       general
             nemotron-     qwen3.8       gpt-oss-
             3.5-bolt:e4b  :latest       safeguard
                  └────────────┼────────────┘
@@ -73,7 +75,7 @@ CLASSIFIER_QUESTIONS = {
                      "Code is only illustrative or incidental.",
         },
     },
-    # research, writing ...
+    # research, general ...
 }
 ```
 
@@ -192,7 +194,7 @@ Pull the classifier and the three route models:
 ollama pull tev1:0.8b                # the router
 ollama pull nemotron-3.5-bolt:e4b    # coding
 ollama pull qwen3.8:latest           # research
-ollama pull gpt-oss-safeguard:latest # writing
+ollama pull gpt-oss-safeguard:latest # general
 ```
 
 Run it:
@@ -208,10 +210,13 @@ streamlit run app.py
 | *(classifier)* | `tev1:0.8b` | Small enough that the routing hop is near-free. It only scores — it never generates. |
 | Coding | `nemotron-3.5-bolt:e4b` | Fast on code, and small enough to stay resident in RAM between questions. |
 | Research | `qwen3.8:latest` | Handles longer reasoning chains and multi-part questions well. |
-| Writing | `gpt-oss-safeguard:latest` | Produces the most usable long-form prose of the three. |
+| General | `gpt-oss-safeguard:latest` | The catch-all for conversation, explanations and everyday text. |
 
 These are the tags in `ROUTE_DEFAULTS`, but nothing is locked to them. The sidebar lists
 every model Ollama can see, so you can reassign any route at runtime and compare.
+
+The diagram above shows the model *families*; the table is the authoritative list of
+tags. Sizes and point releases will drift as you pull newer builds.
 
 `main.py` is a minimal terminal version if you'd rather read the routing logic without a
 UI around it. It hardcodes the same four tags.
@@ -220,14 +225,15 @@ UI around it. It hardcodes the same four tags.
 
 ## Current limitations
 
-- **Routing is winner-takes-all.** No confidence floor, no fallback route when every
-  score is low. A prompt that fits nothing still gets routed somewhere.
+- **Routing is winner-takes-all.** No confidence floor — the highest score wins even
+  when all three are low. In practice `general` absorbs most of those, but that's the
+  classifier being sensible rather than anything the code guarantees.
 - **Classification doesn't stream.** System One returns one JSON response, so there's a
   short pause before the route is announced.
 - **Memory is per-session.** Closing the Streamlit tab loses the conversation; nothing
   is persisted to disk.
-- **Route prompt suffixes are blunt.** The research and writing routes append a fixed
-  instruction to every prompt, including follow-ups where it doesn't fit.
+- **The research suffix is blunt.** That route appends a fixed "provide a research plan
+  and sources" instruction to every prompt, including follow-ups where it reads oddly.
 
 ---
 

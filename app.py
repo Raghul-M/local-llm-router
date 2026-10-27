@@ -27,10 +27,10 @@ ROUTE_DEFAULTS = {
         "prompt_suffix": " Please provide a detailed research plan and a list of sources to be used.",
         "label": "Research",
     },
-    "writing": {
+    "general": {
         "model": "gpt-oss-safeguard:latest",
-        "prompt_suffix": " Please provide a detailed writing plan and a list of sources to be used.",
-        "label": "Writing",
+        "prompt_suffix": "",
+        "label": "General",
     },
 }
 
@@ -68,7 +68,7 @@ CLASSIFIER_QUESTIONS = {
             "Determine whether the user's PRIMARY goal is to investigate a "
             "question and reach an evidence-based conclusion. Research involves "
             "gathering or evaluating sources, comparing alternatives, analyzing "
-            "evidence, or interpreting data. A request to write an article or "
+            "evidence, or interpreting data. A casual question or a request to "
             "implement software may mention research without research being "
             "the main deliverable. For mixed requests, prioritize research "
             "only when the main outcome is an evidence-based evaluation or finding."
@@ -80,33 +80,34 @@ CLASSIFIER_QUESTIONS = {
                 "by sources, data analysis, or findings with a justified conclusion."
             ),
             "false": (
-                "The main deliverable is working software, a polished article, "
-                "an edited document, or another outcome where investigation "
-                "is only a supporting activity."
+                "The main deliverable is working software, or a casual or "
+                "general-knowledge answer, or another outcome where "
+                "investigation is only a supporting activity."
             ),
         },
     },
-    "writing": {
+    "general": {
         "type": "noul",
         "instructions": (
-            "Determine whether the user's PRIMARY goal is to create or improve "
-            "a written artifact for readers. This includes articles, blog posts, "
-            "emails, documentation, proposals, reports, and editing existing text. "
-            "Technical topics, research, and code examples do not automatically "
-            "make a request coding or research. For mixed requests, prioritize "
-            "writing when the main deliverable is a polished, reader-facing "
-            "document rather than an implementation or an investigation."
+            "Determine whether the user's PRIMARY goal is a casual or "
+            "general-knowledge exchange — conversation, a plain explanation, "
+            "an opinion, brainstorming, drafting or editing everyday text, or "
+            "an everyday question. This is the catch-all route: prefer it "
+            "whenever the request does not clearly call for building software "
+            "or for an evidence-based investigation. A technical subject does "
+            "not by itself make a request coding or research."
         ),
         "criteria": {
             "true": (
-                "The main deliverable is a drafted, rewritten, edited, "
-                "proofread, formatted, or publication-ready written artifact. "
-                "Any code, research, or analysis is primarily supporting that artifact."
+                "The main deliverable is a conversational answer, an "
+                "explanation, an opinion, a brainstorm, a piece of everyday "
+                "writing, or help with a general question. Nothing needs to "
+                "be built and no sources need to be gathered and weighed."
             ),
             "false": (
-                "The main deliverable is implementing software or producing "
-                "an evidence-based investigation. Writing is only used to "
-                "explain, document, or summarize the main work."
+                "The main deliverable is working software or a bug fix, or an "
+                "evidence-based investigation that requires gathering and "
+                "evaluating sources."
             ),
         },
     },
