@@ -38,7 +38,9 @@ pick from a dropdown every time, a very small model picks for them.
                               │ noul scores
                  ┌────────────┼────────────┐
                  ▼            ▼            ▼
-             coding       research      writing
+              coding      research       writing
+            nemotron-     qwen3.8       gpt-oss-
+            3.5-bolt:e4b  :latest       safeguard
                  └────────────┼────────────┘
                               │ + replayed conversation history
                               ▼
@@ -184,13 +186,13 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Pull a classifier and at least one chat model:
+Pull the classifier and the three route models:
 
 ```bash
-ollama pull tev1:0.8b     # the router
-ollama pull <coding-model>
-ollama pull <research-model>
-ollama pull <writing-model>
+ollama pull tev1:0.8b                # the router
+ollama pull nemotron-3.5-bolt:e4b    # coding
+ollama pull qwen3.8:latest           # research
+ollama pull gpt-oss-safeguard:latest # writing
 ```
 
 Run it:
@@ -199,12 +201,20 @@ Run it:
 streamlit run app.py
 ```
 
-The sidebar lists every model Ollama can see, so you can reassign any route at runtime.
-The tags in `ROUTE_DEFAULTS` are only defaults — **you probably don't have those exact
-models pulled**, so pick from the dropdowns on first run.
+### Models
+
+| Route | Model | Why |
+|---|---|---|
+| *(classifier)* | `tev1:0.8b` | Small enough that the routing hop is near-free. It only scores — it never generates. |
+| Coding | `nemotron-3.5-bolt:e4b` | Fast on code, and small enough to stay resident in RAM between questions. |
+| Research | `qwen3.8:latest` | Handles longer reasoning chains and multi-part questions well. |
+| Writing | `gpt-oss-safeguard:latest` | Produces the most usable long-form prose of the three. |
+
+These are the tags in `ROUTE_DEFAULTS`, but nothing is locked to them. The sidebar lists
+every model Ollama can see, so you can reassign any route at runtime and compare.
 
 `main.py` is a minimal terminal version if you'd rather read the routing logic without a
-UI around it. It hardcodes its model tags and will fail if you don't have them.
+UI around it. It hardcodes the same four tags.
 
 ---
 

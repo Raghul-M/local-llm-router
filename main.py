@@ -48,7 +48,7 @@ highest_score = max(scores, key=scores.get)
 if highest_score == 'coding':
     print("The user request is related to coding. The score is ", scores['coding'])
     response = chat(
-    model='gemma4:e4b',
+    model='nemotron-3.5-bolt:e4b',
     messages=[{'role': 'user', 'content': user_prompt}],)
     print(response.message.content)
 elif highest_score == 'research':

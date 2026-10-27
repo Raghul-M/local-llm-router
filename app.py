@@ -18,17 +18,17 @@ MAX_MEMORY_TURNS = 20
 
 ROUTE_DEFAULTS = {
     "coding": {
-        "model": "nemotron-mini:4b",
+        "model": "nemotron-3.5-bolt:e4b",
         "prompt_suffix": "",
         "label": "Coding",
     },
     "research": {
-        "model": "granite3-dense:latest",
+        "model": "qwen3.8:latest",
         "prompt_suffix": " Please provide a detailed research plan and a list of sources to be used.",
         "label": "Research",
     },
     "writing": {
-        "model": "lfm2.5-thinking:latest",
+        "model": "gpt-oss-safeguard:latest",
         "prompt_suffix": " Please provide a detailed writing plan and a list of sources to be used.",
         "label": "Writing",
     },
